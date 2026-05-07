@@ -1,4 +1,7 @@
-use App\Http\Controllers\AuthController;
+<?php
 
-Route::get('/login', [AuthController::class, 'showLogin']);
-Route::post('/login', [AuthController::class, 'login']);
+use Illuminate\Support\Facades\Route;
+
+Route::get('/login', function () {
+    return "LOGIN BERHASIL";
+});
