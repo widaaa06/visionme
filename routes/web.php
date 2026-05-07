@@ -16,3 +16,11 @@ Route::get('/', function () {
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::get('/', function () {
+    return "Halaman Utama";
+});
+Route::get('/login', function () {
+    return "LOGIN BERHASIL";
+});
+
