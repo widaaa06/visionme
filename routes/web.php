@@ -16,8 +16,3 @@ Route::get('/', function () {
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
-Route::get('/dashboard', function () {
-    return "Halaman Utama";
-});
-
