@@ -17,10 +17,7 @@ Route::get('/', function () {
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('/', function () {
+Route::get('/dashboard', function () {
     return "Halaman Utama";
-});
-Route::get('/login', function () {
-    return "LOGIN BERHASIL";
 });
 
