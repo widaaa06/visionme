@@ -1,83 +1,260 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VisionMe - Manajemen Pasien</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <title>Manajemen Pasien — VisionMe</title>
+
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    />
+
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
-        .active-menu {
-            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
-            box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.5);
-            color: white !important;
+        body {
+            font-family: "Plus Jakarta Sans", sans-serif;
+        }
+        /* Custom scrollbar smooth & clean match */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
     </style>
 </head>
-<body class="antialiased" x-data="{ sidebarOpen: false }">
+<body class="bg-[#f4f6fa] text-slate-800 antialiased min-h-screen flex">
+    
+    <aside
+        class="w-72 bg-[#0b0f19] text-slate-400 p-6 flex flex-col justify-between hidden lg:flex fixed h-full z-20 shadow-xl"
+    >
+        <div class="space-y-8">
+            <div class="flex items-center gap-3 px-2">
+                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-md shadow-indigo-600/30">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                    </svg>
+                </div>
+                <div>
+                    <span class="font-extrabold text-lg text-white block tracking-tight">VisionMe</span>
+                    <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Admin Panel</span>
+                </div>
+            </div>
 
-    <div class="flex h-screen overflow-hidden">
-        @include('components.sidebar')
-
-        <div class="flex-1 flex flex-col overflow-hidden bg-slate-50">
-            <header class="flex h-20 items-center justify-between bg-white px-8 border-b border-slate-200/60 sticky top-0 z-40">
-                <button @click="sidebarOpen = !sidebarOpen" class="text-slate-500 md:hidden cursor-pointer">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                </button>
-                <div class="text-sm font-medium text-slate-400 hidden sm:block">VisionMe &bull; Manajemen Pasien</div>
-            </header>
-
-            <main class="flex-1 overflow-x-hidden overflow-y-auto p-8 lg:p-12">
+            <nav class="space-y-1.5">
+                <a href="{{ route('dashboard') }}" 
+                   class="flex items-center gap-3.5 px-4 py-3 rounded-xl font-semibold transition-all {{ request()->routeIs('dashboard') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white font-medium transition duration-200' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z" />
+                    </svg>
+                    Dashboard
+                </a>
                 
-                @if(session('success'))
-                    <div x-data="{ show: true }" x-show="show" class="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl flex items-center justify-between shadow-sm">
-                        <span class="text-sm font-semibold">{{ session('success') }}</span>
-                        <button @click="show = false" class="text-emerald-400 hover:text-emerald-600 text-sm font-bold">&times;</button>
-                    </div>
-                @endif
+                <a href="{{ route('pemeriksaan.index') }}" 
+                   class="flex items-center gap-3.5 px-4 py-3 rounded-xl font-semibold transition-all {{ request()->routeIs('pemeriksaan.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white font-medium transition duration-200' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                    </svg>
+                    Hasil Pemeriksaan
+                </a>
 
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-                    <div>
-                        <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Daftar Pasien Terdaftar</h1>
-                        <p class="text-slate-500 text-sm mt-1">Kelola data akun pasien yang menggunakan aplikasi mobile VisionMe.</p>
-                    </div>
-                    <a href="{{ route('pasien.create') }}" class="bg-gradient-to-r from-indigo-600 to-blue-500 text-white font-bold px-6 py-3 rounded-xl shadow-md shadow-indigo-500/20 hover:opacity-95 transition text-sm">
-                        + Tambah Pasien Baru
+                <a href="{{ route('pasien.index') }}" 
+                   class="flex items-center gap-3.5 px-4 py-3 rounded-xl font-semibold transition-all {{ request()->routeIs('pasien.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white font-medium transition duration-200' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+                    </svg>
+                    Manajemen Pasien
+                </a>
+
+                <a href="{{ route('users.index') }}" 
+                   class="flex items-center gap-3.5 px-4 py-3 rounded-xl font-semibold transition-all {{ request()->routeIs('users.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white font-medium transition duration-200' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.43l-1.003.754c-.29.218-.443.576-.408.94.004.055.006.112.006.168a1.125 1.125 0 0 1-.006.168c-.035.364.117.722.408.94l1.003.754a1.125 1.125 0 0 1 .26 1.43l-1.296 2.247a1.125 1.125 0 0 1-1.37.49l-1.216-.456a1.125 1.125 0 0 0-1.07.124c-.073.044-.146.087-.22.128-.332.183-.582.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281a1.125 1.125 0 0 0-.646-.87c-.074-.04-.147-.083-.22-.127a1.124 1.124 0 0 0-1.074-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.43l1.004-.754c.29-.218.443-.576.408-.94a1.15 1.15 0 0 1-.006-.168c0-.056-.002-.113-.006-.168-.035-.364-.117-.722-.408-.94l-1.004-.754a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.49l1.216.456c.356.133.751.072 1.076-.124.072-.041.146-.084.218-.128.333-.183.582-.495.645-.869l.214-1.28Z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                    </svg>
+                    Manajemen User
+                </a>
+
+                <a href="{{ route('obat.index') }}" 
+                   class="flex items-center gap-3.5 px-4 py-3 rounded-xl font-semibold transition-all {{ request()->routeIs('obat.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white font-medium transition duration-200' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Apotek / Obat
+                </a>
+            </nav>
+        </div>
+
+        <div>
+            <form action="#" method="POST">
+                @csrf
+                <button
+                    type="submit"
+                    class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-rose-400 hover:bg-rose-500/10 font-semibold transition duration-150 cursor-pointer"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M19.5 12l-3-3m3 3l-3 3m3-3H9" />
+                    </svg>
+                    Keluar Akun
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <div class="flex-1 lg:ml-72 flex flex-col min-h-screen">
+        
+        <header class="bg-white border-b border-slate-200/80 px-8 py-4 flex items-center justify-between sticky top-0 z-10">
+            <div class="text-sm font-semibold text-slate-400">
+                VisionMe <span class="text-slate-300 mx-1.5">&bull;</span> <span class="text-slate-600 font-medium">Manajemen Pasien</span>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="text-right">
+                    <span class="block text-sm font-bold text-slate-900">Admin User</span>
+                    <span class="block text-xs font-semibold text-slate-400">id: admin@gmail.com</span>
+                </div>
+                <div class="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 font-bold shadow-sm">
+                    AU
+                </div>
+            </div>
+        </header>
+
+        <main class="p-8 space-y-8 flex-1">
+            
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">
+                        Manajemen Data Pasien
+                    </h1>
+                    <p class="text-sm text-slate-500 font-medium mt-0.5">
+                        Kelola data rekam medis utama, profil akun, dan riwayat pendaftaran pasien klinis.
+                    </p>
+                </div>
+                <div>
+                    <a href="{{ route('pasien.create') }}"
+                        class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-md shadow-indigo-600/10 transition cursor-pointer"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        Tambah Pasien Baru
                     </a>
                 </div>
+            </div>
 
-                <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-slate-900 text-white text-xs font-bold uppercase tracking-wider">
-                                    <th class="px-6 py-4 rounded-tl-[2rem]">ID</th>
-                                    <th class="px-6 py-4">Nama Lengkap</th>
-                                    <th class="px-6 py-4">Alamat Email</th>
-                                    <th class="px-6 py-4 rounded-tr-[2rem]">Terdaftar Pada</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
-                                @forelse($semuaPasien as $pasien)
-                                    <tr class="hover:bg-slate-50/80 transition">
-                                        <td class="px-6 py-4 font-mono text-xs text-slate-400">#{{ $pasien->id }}</td>
-                                        <td class="px-6 py-4 font-bold text-slate-900">{{ $pasien->name }}</td>
-                                        <td class="px-6 py-4 text-slate-600">{{ $pasien->email }}</td>
-                                        <td class="px-6 py-4 text-slate-400 text-xs">{{ $pasien->created_at->format('d M Y') }}</td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="4" class="px-6 py-12 text-center text-slate-400">Belum ada pasien terdaftar.</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+            <div class="bg-white rounded-[2rem] border border-slate-200/60 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+    <thead>
+        <tr class="bg-[#0b0f19] text-slate-300 text-[11px] font-bold uppercase tracking-wider">
+            <th class="py-4 px-6 rounded-tl-[2rem]">Nama Pasien</th>
+            <th class="py-4 px-6">Alamat Email</th>
+            <th class="py-4 px-6">No. Rekam Medis</th>
+            <th class="py-4 px-6 rounded-tr-[2rem] text-center">Aksi</th>
+        </tr>
+    </thead>
+
+    <tbody class="text-xs font-medium text-slate-600 divide-y divide-slate-100">
+
+        @forelse($pasiens as $pasien)
+        <tr class="hover:bg-slate-50/60 transition">
+
+            <td class="py-4 px-6 font-bold text-slate-900">
+                <div class="flex items-center gap-2.5">
+
+                    <div class="w-8 h-8 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600 text-[10px] font-bold">
+                        {{ strtoupper(substr($pasien->nama, 0, 2)) }}
+                    </div>
+
+                    <div>
+                        <span class="block">{{ $pasien->nama }}</span>
+
+                        <span class="block text-[10px] font-semibold text-slate-400">
+                            {{ $pasien->jenis_kelamin }} · {{ $pasien->umur }} Thn
+                        </span>
+                    </div>
+
+                </div>
+            </td>
+
+            <td class="py-4 px-6 text-slate-700 font-semibold">
+                {{ $pasien->email }}
+            </td>
+
+            <td class="py-4 px-6 font-mono font-bold text-slate-800">
+                {{ $pasien->no_rekam_medis }}
+            </td>
+
+            <td class="py-4 px-6">
+                <div class="flex items-center justify-center gap-2">
+
+                    <a href="{{ route('pasien.show', $pasien->id) }}"
+                        class="p-2 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg border border-slate-200 transition">
+                        Detail
+                    </a>
+
+                    <a href="{{ route('pasien.edit', $pasien->id) }}"
+                        class="p-2 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-lg border border-amber-200 transition">
+                        Edit
+                    </a>
+
+                    <form action="{{ route('pasien.destroy', $pasien->id) }}"
+                        method="POST"
+                        onsubmit="return confirm('Yakin ingin menghapus pasien ini?')">
+
+                        @csrf
+                        @method('DELETE')
+
+                        <button type="submit"
+                            class="p-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg border border-rose-200 transition">
+                            Hapus
+                        </button>
+
+                    </form>
+
+                </div>
+            </td>
+
+        </tr>
+        @empty
+
+        <tr>
+            <td colspan="4" class="py-10 text-center text-slate-400 font-semibold">
+                Belum ada data pasien.
+            </td>
+        </tr>
+
+        @endforelse
+
+    </tbody>
+</table>
+                </div>
+
+                <div class="px-6 py-4 border-t border-slate-100 flex items-center justify-between bg-slate-50/30 text-xs font-bold text-slate-500">
+                    <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/30">
+    {{ $pasiens->links() }}
+</div>
+                    <div class="inline-flex gap-2">
+                        <button class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-400 cursor-not-allowed" disabled>Prev</button>
+                        <button class="px-3 py-1.5 bg-indigo-600 border border-indigo-600 text-white rounded-lg">1</button>
+                        <button class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition">Next</button>
                     </div>
                 </div>
-            </main>
-        </div>
+            </div>
+
+        </main>
     </div>
 </body>
 </html>

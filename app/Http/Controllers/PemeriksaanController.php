@@ -3,11 +3,21 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Pemeriksaan; // Pastikan nama Model kamu sesuai (misal: Pemeriksaan atau Skrining)
+use App\Models\Pemeriksaan; 
 use App\Models\User;
 
 class PemeriksaanController extends Controller
 {
+    // === TAMPILKAN HALAMAN INDEX WEB ===
+    public function index()
+{
+    $semuaPemeriksaan = Pemeriksaan::with('user')
+        ->latest()
+        ->paginate(10);
+
+    return view('pemeriksaan.index', compact('semuaPemeriksaan'));
+}
+
     // 1. Dipanggil saat Admin klik "Simpan Hasil Pemeriksaan" di Web
     public function store(Request $request)
     {
@@ -18,20 +28,16 @@ class PemeriksaanController extends Controller
             'status_medis'     => 'required|string',
         ]);
 
-        // Menyimpan data ke database
         Pemeriksaan::create($validated);
 
-        // Kembali ke halaman dashboard dengan pesan sukses
-        return redirect()->route('dashboard')->with('success', 'Hasil pemeriksaan berhasil disinkronkan!');
+        return redirect()->route('pemeriksaan.index')->with('success', 'Hasil pemeriksaan berhasil disinkronkan!');
     }
 
     // 2. Endpoint API yang akan dipanggil oleh FLUTTER secara otomatis
     public function getRiwayatApi(Request $request)
     {
-        // Mengambil id user yang sedang login di Flutter
         $userId = $request->user()->id; 
 
-        // Ambil riwayat pemeriksaan milik user tersebut
         $riwayat = Pemeriksaan::where('user_id', $userId)
                               ->latest()
                               ->get();

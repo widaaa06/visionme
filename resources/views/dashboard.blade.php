@@ -1,189 +1,201 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VisionMe - Dashboard Admin</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
-        .active-menu {
-            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
-            box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.5);
-            color: white !important;
-        }
-    </style>
-</head>
-<body class="antialiased" x-data="{ sidebarOpen: false }">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="csrf-token" content="{{ csrf_token() }}" />
+        <title>Dashboard Overview — VisionMe</title>
 
-    <div class="flex h-screen overflow-hidden">
-        @include('components.sidebar')
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
-        <div class="flex-1 flex flex-col overflow-hidden bg-slate-50">
-            <header class="flex h-20 items-center justify-between bg-white px-8 border-b border-slate-200/60 sticky top-0 z-40">
-                <button @click="sidebarOpen = !sidebarOpen" class="text-slate-500 md:hidden cursor-pointer">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                </button>
-                <div class="text-sm font-medium text-slate-400 hidden sm:block">
-                    Selamat Datang, <span class="text-slate-700 font-bold">{{ Auth::user()->name }}</span> &bull; Panel Admin VisionMe
+        <link
+            href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+            rel="stylesheet"
+        />
+
+        <style>
+            body {
+                font-family: "Plus Jakarta Sans", sans-serif;
+            }
+            /* Custom scrollbar biar lebih smooth & clean */
+            ::-webkit-scrollbar {
+                width: 6px;
+                height: 6px;
+            }
+            ::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            ::-webkit-scrollbar-thumb {
+                background: #cbd5e1;
+                border-radius: 3px;
+            }
+            ::-webkit-scrollbar-thumb:hover {
+                background: #94a3b8;
+            }
+        </style>
+    </head>
+    <body class="bg-[#f4f6fa] text-slate-800 antialiased min-h-screen flex">
+        <aside
+            class="w-72 bg-[#0b0f19] text-slate-400 p-6 flex flex-col justify-between hidden lg:flex fixed h-full z-20 shadow-xl"
+        >
+            <div class="space-y-8">
+                <div class="flex items-center gap-3 px-2">
+                    <div
+                        class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-md shadow-indigo-600/30"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="2.5"
+                            stroke="currentColor"
+                            class="w-5 h-5"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+                            />
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                            />
+                        </svg>
+                    </div>
+                    <div>
+                        <span
+                            class="font-extrabold text-lg text-white block tracking-tight"
+                            >VisionMe</span
+                        >
+                        <span
+                            class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest"
+                            >Admin Panel</span
+                        >
+                    </div>
+                </div>
+
+                <nav class="space-y-1.5">
+    <a href="{{ route('dashboard') }}" 
+       class="flex items-center gap-3.5 px-4 py-3 rounded-xl font-semibold transition-all {{ request()->routeIs('dashboard') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white font-medium transition duration-200' }}">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z" />
+        </svg>
+        Dashboard
+    </a>
+    
+    <a href="{{ route('pemeriksaan.index') }}" 
+       class="flex items-center gap-3.5 px-4 py-3 rounded-xl font-semibold transition-all {{ request()->routeIs('pemeriksaan.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white font-medium transition duration-200' }}">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+        </svg>
+        Hasil Pemeriksaan
+    </a>
+
+    <a href="{{ route('pasien.index') }}" 
+       class="flex items-center gap-3.5 px-4 py-3 rounded-xl font-semibold transition-all {{ request()->routeIs('pasien.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white font-medium transition duration-200' }}">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+        </svg>
+        Manajemen Pasien
+    </a>
+
+    <a href="{{ route('users.index') }}" 
+       class="flex items-center gap-3.5 px-4 py-3 rounded-xl font-semibold transition-all {{ request()->routeIs('users.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white font-medium transition duration-200' }}">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.43l-1.003.754c-.29.218-.443.576-.408.94.004.055.006.112.006.168a1.125 1.125 0 0 1-.006.168c-.035.364.117.722.408.94l1.003.754a1.125 1.125 0 0 1 .26 1.43l-1.296 2.247a1.125 1.125 0 0 1-1.37.49l-1.216-.456a1.125 1.125 0 0 0-1.07.124c-.073.044-.146.087-.22.128-.332.183-.582.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281a1.125 1.125 0 0 0-.646-.87c-.074-.04-.147-.083-.22-.127a1.124 1.124 0 0 0-1.074-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.43l1.004-.754c.29-.218.443-.576.408-.94a1.15 1.15 0 0 1-.006-.168c0-.056-.002-.113-.006-.168-.035-.364-.117-.722-.408-.94l-1.004-.754a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.49l1.216.456c.356.133.751.072 1.076-.124.072-.041.146-.084.218-.128.333-.183.582-.495.645-.869l.214-1.28Z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+        </svg>
+        Manajemen User
+    </a>
+
+    <a href="{{ route('obat.index') }}" 
+       class="flex items-center gap-3.5 px-4 py-3 rounded-xl font-semibold transition-all {{ request()->routeIs('obat.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white font-medium transition duration-200' }}">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        Apotek / Obat
+    </a>
+</nav>
+            </div>
+
+            <div>
+                <form action="#" method="POST">
+                    @csrf
+                    <button
+                        type="submit"
+                        class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-rose-400 hover:bg-rose-500/10 font-semibold transition duration-150 cursor-pointer"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="2"
+                            stroke="currentColor"
+                            class="w-5 h-5"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M19.5 12l-3-3m3 3l-3 3m3-3H9"
+                            />
+                        </svg>
+                        Keluar Akun
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <div class="flex-1 lg:ml-72 flex flex-col min-h-screen">
+            <header
+                class="bg-white border-b border-slate-200/80 px-8 py-4 flex items-center justify-between sticky top-0 z-10"
+            >
+                <div class="relative w-80">
+                    <span
+                        class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="2"
+                            stroke="currentColor"
+                            class="w-4 h-4"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.603 10.601Z"
+                            />
+                        </svg>
+                    </span>
+                    <input
+                        type="text"
+                        placeholder="Cari data pasien, rekam medis..."
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-indigo-500 focus:bg-white transition"
+                    />
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <span class="block text-sm font-bold text-slate-900"
+                            >Admin User</span
+                        >
+                        <span class="block text-xs font-semibold text-slate-400"
+                            >id: admin@gmail.com</span
+                        >
+                    </div>
+                    <div
+                        class="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 font-bold shadow-sm"
+                    >
+                        AU
+                    </div>
                 </div>
             </header>
 
-            <main class="flex-1 overflow-x-hidden overflow-y-auto p-8 lg:p-12">
-                
-                @if(request()->is('users*'))
-                    <div class="mb-8">
-                        <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen User</h1>
-                        <p class="text-slate-500 text-sm mt-1">Kelola data administrator dan hak akses panel VisionMe.</p>
-                    </div>
-
-                    <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-slate-50 border-b border-slate-100 text-xs font-bold text-slate-400 uppercase tracking-wider">
-                                    <th class="py-4 px-6">No</th>
-                                    <th class="py-4 px-6">Nama Pengguna</th>
-                                    <th class="py-4 px-6">Alamat Email</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-sm text-slate-700 divide-y divide-slate-100">
-                                @if(isset($users) && $users->count() > 0)
-                                    @foreach($users as $key => $user)
-                                    <tr>
-                                        <td class="py-4 px-6 font-semibold text-slate-400">{{ $key + 1 }}</td>
-                                        <td class="py-4 px-6 font-bold text-slate-900">{{ $user->name }}</td>
-                                        <td class="py-4 px-6 text-slate-500">{{ $user->email }}</td>
-                                    </tr>
-                                    @endforeach
-                                @else
-                                    <tr>
-                                        <td class="py-4 px-6 font-semibold text-slate-400">1</td>
-                                        <td class="py-4 px-6 font-bold text-slate-900">{{ Auth::user()->name }}</td>
-                                        <td class="py-4 px-6 text-slate-500">{{ Auth::user()->email }}</td>
-                                    </tr>
-                                @endif
-                            </tbody>
-                        </table>
-                    </div>
-
-                @else
-                    <div class="mb-8">
-                        <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Ringkasan Sistem</h1>
-                        <p class="text-slate-500 text-sm mt-1">Pantau statistik skrining aplikasi mata bergerak secara real-time.</p>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center gap-5">
-                            <div class="p-4 bg-indigo-50 text-indigo-600 rounded-2xl">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Pemeriksaan</p>
-                                <h3 class="text-2xl font-black text-slate-900 mt-1">{{ $totalSkrining ?? 0 }} <span class="text-xs font-normal text-slate-400">kali tes</span></h3>
-                            </div>
-                        </div>
-
-                        <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center gap-5">
-                            <div class="p-4 bg-rose-50 text-rose-600 rounded-2xl">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Indikasi Gangguan</p>
-                                <h3 class="text-2xl font-black text-slate-900 mt-1">{{ $indikasiMedis ?? 0 }} <span class="text-xs font-normal text-slate-400">pasien</span></h3>
-                            </div>
-                        </div>
-
-                        <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center gap-5">
-                            <div class="p-4 bg-emerald-50 text-emerald-600 rounded-2xl">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Akurasi Validasi</p>
-                                <h3 class="text-2xl font-black text-slate-900 mt-1">{{ $akurasiSistem ?? '0%' }}</h3>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-white p-6 sm:p-8 rounded-[2rem] border border-slate-100 shadow-sm">
-                            <h3 class="text-md font-bold text-slate-900 mb-4">Metode Pemeriksaan Populer</h3>
-                            <div class="h-64 flex items-center justify-center">
-                                <canvas id="chartKategori"></canvas>
-                            </div>
-                        </div>
-
-                        <div class="bg-gradient-to-br from-slate-900 to-indigo-950 p-8 rounded-[2rem] text-white flex flex-col justify-between shadow-xl relative overflow-hidden">
-                            <div class="absolute right-0 bottom-0 opacity-10 translate-x-10 translate-y-10">
-                                <svg class="w-80 h-80" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-                            </div>
-                            <div class="z-10">
-                                <span class="bg-white/10 px-3 py-1 rounded-full text-xs font-semibold text-indigo-300">Panduan Admin</span>
-                                <h2 class="text-xl font-extrabold mt-4 leading-snug">Butuh sinkronisasi data pemeriksaan dari perangkat eksternal?</h2>
-                                <p class="text-slate-400 text-sm mt-2">Semua data hasil tes tajam penglihatan (Snellen Chart) dan analisis buta warna ter-update otomatis begitu pasien menyelesaikan tes di aplikasi mobile mereka.</p>
-                            </div>
-                            <div class="pt-6 border-t border-white/10 mt-6 z-10 flex gap-4">
-                                <a href="{{ route('pemeriksaan.create') }}" class="bg-white text-slate-950 font-bold px-5 py-2.5 rounded-xl text-xs hover:bg-slate-100 transition">Input Manual</a>
-                                <a href="{{ route('pasien.index') }}" class="text-white/80 hover:text-white font-semibold text-xs flex items-center gap-1">Lihat Pasien &rarr;</a>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-
-            </main>
+            <main class="p-8 space-y-8 flex-1">
+    @yield('content')
+</main>
         </div>
-    </div>
-
-    @if(!request()->is('users*'))
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const ctx = document.getElementById('chartKategori').getContext('2d');
-            
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Snellen Chart', 'Astigmatisme', 'Buta Warna'],
-                    datasets: [{
-                        label: 'Jumlah Pengujian',
-                        data: [65, 32, 48], 
-                        backgroundColor: [
-                            'rgba(79, 70, 229, 0.85)',
-                            'rgba(59, 130, 246, 0.85)',
-                            'rgba(16, 185, 129, 0.85)'
-                        ],
-                        borderRadius: 12,
-                        borderSkipped: false,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: '#f1f5f9' },
-                            ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans' } }
-                        },
-                        x: {
-                            grid: { display: false },
-                            ticks: { color: '#475569', font: { family: 'Plus Jakarta Sans', weight: '600' } }
-                        }
-                    }
-                }
-            });
-        });
-    </script>
-    @endif
-</body>
+    </body>
 </html>

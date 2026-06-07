@@ -13,5 +13,6 @@ class Obat extends Model
         'deskripsi',
         'harga',
         'stok',
+        'gambar',
     ];
 }

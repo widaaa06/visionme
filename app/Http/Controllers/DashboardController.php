@@ -10,48 +10,35 @@ use Illuminate\Support\Facades\Hash;
 class DashboardController extends Controller
 {
     /**
-     * Tampilkan Halaman Utama Dashboard (Statistik)
+     * Dashboard Overview (Statistik)
      */
     public function index()
     {
-        $totalSkrining = PemeriksaanMata::count();
-        $indikasiMedis = PemeriksaanMata::where('status_medis', '!=', 'Normal')->count();
-        $akurasiSistem = $totalSkrining > 0 ? '98.2%' : '0%';
+        $totalSkrining   = PemeriksaanMata::count();
+        $indikasiMedis   = PemeriksaanMata::where('status_medis', 'Positif')->count();
+        $totalPasien     = User::count();
+        $akurasiSistem   = 98; 
 
-        return view('dashboard', compact('totalSkrining', 'indikasiMedis', 'akurasiSistem'));
+        return view('dashboard.index', compact('totalSkrining', 'indikasiMedis', 'totalPasien', 'akurasiSistem'));
     }
 
-    /* =========================================================================
-     * AREA MANAJEMEN HASIL PEMERIKSAAN MATA
-     * ========================================================================= */
-
     /**
-     * Tampilkan Semua Daftar Hasil Pemeriksaan (Tabel Riwayat)
+     * Menampilkan daftar pemeriksaan (Metode yang dipanggil route)
      */
     public function list()
     {
-        // Mengambil data pemeriksaan terbaru beserta data user/pasiennya (Eager Loading)
         $semuaPemeriksaan = PemeriksaanMata::with('user')->latest()->get();
-
         return view('pemeriksaan.index', compact('semuaPemeriksaan'));
     }
 
-    /**
-     * Tampilkan Halaman Form Input Skrining Baru
-     */
     public function create()
     {
-        // Mengambil semua user/pasien untuk dipilih di form dropdown nanti
         $pasiens = User::all(); 
         return view('pemeriksaan.create', compact('pasiens'));
     }
 
-    /**
-     * Proses Simpan Data Pemeriksaan ke Database
-     */
     public function store(Request $request)
     {
-        // Validasi inputan form
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'kategori_uji' => 'required|string',
@@ -59,61 +46,36 @@ class DashboardController extends Controller
             'status_medis' => 'required|string',
         ]);
 
-        // Simpan ke database
-        PemeriksaanMata::create([
-            'user_id' => $request->user_id,
-            'kategori_uji' => $request->kategori_uji,
-            'hasil_pengukuran' => $request->hasil_pengukuran,
-            'status_medis' => $request->status_medis,
-        ]);
+        PemeriksaanMata::create($request->all());
 
-        // Kembalikan ke halaman daftar dengan pesan sukses
-        return redirect()->route('pemeriksaan.index')->with('success', 'Data pemeriksaan berhasil disimpan!');
+        return redirect()->route('pemeriksaan.index')->with('success', 'Data berhasil disimpan!');
     }
 
-    /* =========================================================================
-     * AREA MANAJEMEN DATA AKUN PASIEN
-     * ========================================================================= */
-
-    /**
-     * Tampilkan Daftar Akun Pasien Terdaftar
-     */
     public function pasienIndex()
     {
-        // Mengambil data seluruh pasien yang diurutkan dari pendaftaran terbaru
         $semuaPasien = User::latest()->get();
-
         return view('pasien.index', compact('semuaPasien'));
     }
 
-    /**
-     * Tampilkan Form Registrasi Akun Pasien Baru
-     */
     public function pasienCreate()
     {
         return view('pasien.create');
     }
 
-    /**
-     * Proses Simpan Registrasi Akun Pasien Baru
-     */
     public function pasienStore(Request $request)
     {
-        // Validasi keunikan email agar tidak terjadi crash duplikasi data di DB
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6',
         ]);
 
-        // Enkripsi password menggunakan bcrypt secara otomatis lewat Hash::make
         User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        // Lempar kembali ke halaman tabel pasien dengan flash alert
-        return redirect()->route('pasien.index')->with('success', 'Data pasien baru berhasil didaftarkan!');
+        return redirect()->route('pasien.index')->with('success', 'Pasien berhasil didaftarkan!');
     }
 }
