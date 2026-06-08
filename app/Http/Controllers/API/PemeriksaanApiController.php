@@ -25,7 +25,7 @@ class PemeriksaanApiController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validasi data gagal.',
+                'message' => $validator->errors()->first(), // Disinkronkan: Mengambil 1 pesan error pertama
                 'errors'  => $validator->errors()
             ], 422);
         }
@@ -63,12 +63,16 @@ class PemeriksaanApiController extends Controller
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email',
             'password' => 'required|string|min:8',
+        ], [
+            // Custom pesan validasi agar lebih user-friendly di mobile
+            'email.unique' => 'Email ini sudah terdaftar.',
+            'password.min' => 'Password minimal harus 8 karakter.',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validasi pendaftaran gagal.',
+                'message' => $validator->errors()->first(), // Disinkronkan: Mengambil 1 string error pertama untuk snackbar Flutter
                 'errors'  => $validator->errors()
             ], 422);
         }
@@ -113,7 +117,7 @@ class PemeriksaanApiController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Format email atau password tidak valid.',
+                'message' => $validator->errors()->first(), // Disinkronkan
                 'errors'  => $validator->errors()
             ], 422);
         }
@@ -127,7 +131,7 @@ class PemeriksaanApiController extends Controller
             ], 401);
         }
 
-        // Hapus token lama agar tidak menumpuk (opsional)
+        // Hapus token lama agar tidak menumpuk
         $user->tokens()->delete();
 
         // Buat token baru menggunakan Sanctum
