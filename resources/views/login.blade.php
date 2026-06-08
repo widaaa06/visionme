@@ -120,11 +120,18 @@
                     @endif
                 </div>
 
-                <div class="pt-4">
+                <div class="pt-4 flex flex-col gap-2">
                     <button type="submit" 
                         class="w-full bg-[#1e293b] hover:bg-[#0f172a] text-white font-bold py-3.5 px-6 rounded-full shadow-md hover:shadow-lg active:scale-[0.99] transition-all duration-200 cursor-pointer text-center text-sm tracking-wide">
                         Login
                     </button>
+                    <a href="{{ route('visionme.app') }}" 
+                        class="w-full bg-gradient-to-r from-sky-400 to-teal-500 hover:from-sky-500 hover:to-teal-600 text-white font-bold py-3.5 px-6 rounded-full shadow-md hover:shadow-lg active:scale-[0.99] transition-all duration-200 cursor-pointer text-center text-sm tracking-wide flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
+                        </svg>
+                        Open Mobile Simulator
+                    </a>
                 </div>
             </form>
         </div>

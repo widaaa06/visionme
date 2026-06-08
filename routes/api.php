@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ObatController;
 
 // AUTH
 Route::post('/login', [PemeriksaanApiController::class, 'login']);
+Route::post('/register', [PemeriksaanApiController::class, 'register']);
 
 // APOTEK (PUBLIC)
 Route::get('/obat', [ObatController::class, 'index']);

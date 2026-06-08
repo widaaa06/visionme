@@ -1,0 +1,497 @@
+/* ==========================================================================
+   VisionMe Mobile App Simulator — CSS Design System & Layouts
+   ========================================================================== */
+
+/* Design Tokens & Variables */
+:root {
+    /* Color Palette - Soft Blue, Cyan, Teal, Slate */
+    --primary-core: #0ea5e9;       /* Soft Sky Blue */
+    --primary-teal: #0d9488;       /* Teal */
+    --primary-cyan: #06b6d4;       /* Cyan */
+    --primary-deep: #1e3a8a;       /* Deep Navy */
+    
+    --bg-light: #f0fdfa;           /* Soft Teal background */
+    --bg-dark: #0f172a;            /* Slate 900 */
+    --surface-light: rgba(255, 255, 255, 0.75);
+    --surface-glass: rgba(255, 255, 255, 0.45);
+    
+    --text-primary: #0f172a;
+    --text-muted: #64748b;
+    --text-light: #f8fafc;
+    
+    --success: #10b981;
+    --warning: #f59e0b;
+    --error: #ef4444;
+    
+    /* MD3 Border Radius */
+    --radius-xs: 4px;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-full: 9999px;
+    
+    /* Box Shadows */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Base resets for simulator layout */
+.app-container {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--text-primary);
+}
+
+/* Glassmorphism Class */
+.glass-effect {
+    background: var(--surface-light);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.glass-effect-dark {
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Smartphone Mockup */
+.phone-mockup {
+    width: 385px;
+    height: 780px;
+    border-radius: 42px;
+    background: #111827; /* Matte Black outer chassis */
+    padding: 11px;
+    box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.35), 
+                0px 0px 0px 4px #374151,
+                inset 0px 0px 4px 2px rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+}
+
+/* Smartphone Screen Inside Mockup */
+.phone-screen {
+    width: 100%;
+    height: 100%;
+    border-radius: 32px;
+    background: #f8fafc;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-col: column;
+    box-shadow: inset 0px 0px 10px rgba(0,0,0,0.1);
+}
+
+/* Status Bar & Notch */
+.phone-notch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 25px;
+    background: #111827;
+    border-bottom-left-radius: 18px;
+    border-bottom-right-radius: 18px;
+    z-index: 1000;
+}
+
+.phone-notch::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -8px;
+    width: 8px;
+    height: 8px;
+    background: radial-gradient(circle at bottom left, transparent 8px, #111827 0);
+}
+
+.phone-notch::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -8px;
+    width: 8px;
+    height: 8px;
+    background: radial-gradient(circle at bottom right, transparent 8px, #111827 0);
+}
+
+.phone-status-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 38px;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 700;
+    color: #1e293b;
+    z-index: 999;
+    pointer-events: none;
+    box-sizing: border-box;
+}
+
+.phone-home-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 5px;
+    border-radius: 10px;
+    background: #0f172a;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+/* Phone Screen Content Wrapper */
+.phone-content {
+    width: 100%;
+    height: 100%;
+    padding-top: 38px;    /* Height of status bar */
+    padding-bottom: 70px; /* Space for Bottom Navigation and Home Indicator */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Custom internal scrollbar for phone simulator */
+.phone-content::-webkit-scrollbar {
+    width: 3px;
+}
+.phone-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+.phone-content::-webkit-scrollbar-thumb {
+    background: rgba(14, 165, 233, 0.2);
+    border-radius: 99px;
+}
+
+/* Bottom Navigation Bar Inside Simulator */
+.phone-bottom-nav {
+    position: absolute;
+    bottom: 16px;
+    left: 12px;
+    right: 12px;
+    height: 56px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 32px 0 rgba(14, 165, 233, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 10px;
+    z-index: 998;
+    box-sizing: border-box;
+    transition: transform 0.3s ease;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: 600;
+    transition: all var(--transition-fast);
+    cursor: pointer;
+    width: 50px;
+    height: 44px;
+    border-radius: 12px;
+}
+
+.nav-item svg {
+    width: 20px;
+    height: 20px;
+    margin-bottom: 2px;
+    transition: transform 0.2s ease;
+}
+
+.nav-item:hover svg {
+    transform: translateY(-2px);
+}
+
+.nav-item.active {
+    color: var(--primary-teal);
+}
+
+.nav-item.active svg {
+    color: var(--primary-teal);
+    transform: scale(1.1);
+}
+
+/* Screen Transitions */
+.phone-screen-view {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    animation: fadeInSlide var(--transition-normal);
+}
+
+@keyframes fadeInSlide {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Screen Pulse/Splash Animations */
+@keyframes eyeBlink {
+    0%, 100% {
+        transform: scaleY(1);
+    }
+    50% {
+        transform: scaleY(0.1);
+    }
+}
+
+.eye-blink-anim {
+    animation: eyeBlink 3s infinite ease-in-out;
+    transform-origin: center;
+}
+
+/* Interactive Charts */
+.score-circle {
+    position: relative;
+    width: 140px;
+    height: 140px;
+}
+
+.score-circle svg {
+    transform: rotate(-90deg);
+}
+
+.score-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--primary-deep);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.score-value span {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+/* Dynamic Eye Test Controls */
+.snellen-letter {
+    font-family: monospace;
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    text-align: center;
+}
+
+.ishihara-plate {
+    width: 170px;
+    height: 170px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-lg);
+    background-size: cover;
+    margin: 0 auto;
+    position: relative;
+}
+
+/* Astigmatism Wheel */
+.astigmatism-wheel-container {
+    width: 200px;
+    height: 200px;
+    position: relative;
+    margin: 0 auto;
+}
+
+.astigmatism-wheel {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--radius-full);
+    border: 2px solid #cbd5e1;
+    position: relative;
+}
+
+/* Accessibility settings for text sizes */
+.accessibility-large-text .phone-screen-view {
+    font-size: 110%;
+}
+.accessibility-large-text .text-xs { font-size: 0.8rem; }
+.accessibility-large-text .text-sm { font-size: 0.95rem; }
+.accessibility-large-text .text-base { font-size: 1.1rem; }
+.accessibility-large-text h1, .accessibility-large-text h2, .accessibility-large-text h3 {
+    font-weight: 800;
+}
+
+/* Design Spec Color Chips */
+.color-chip {
+    height: 64px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 8px;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    box-shadow: var(--shadow-sm);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* Gradient backgrounds for MD3 Cards */
+.bg-gradient-soft {
+    background: linear-gradient(135deg, #e0f2fe 0%, #f0fdfa 100%);
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%);
+}
+
+.bg-gradient-dark {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+}
+
+.bg-gradient-pink {
+    background: linear-gradient(135deg, #fdf2f8 0%, #fae8ff 100%);
+}
+
+/* Success Checkmark Animation */
+.success-checkmark {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+}
+
+.success-checkmark .check-icon {
+    width: 80px;
+    height: 80px;
+    position: relative;
+    border-radius: 50%;
+    box-sizing: content-box;
+    border: 4px solid var(--success);
+}
+
+.success-checkmark .check-icon::before {
+    top: 3px;
+    left: -2px;
+    width: 30px;
+    transform-origin: 100% 50%;
+    border-radius: 100px 0 0 100px;
+}
+
+.success-checkmark .check-icon::after {
+    top: 0;
+    left: 30px;
+    width: 60px;
+    transform-origin: 0 50%;
+    border-radius: 0 100px 100px 0;
+}
+
+.success-checkmark .check-icon .icon-line {
+    height: 5px;
+    background-color: var(--success);
+    display: block;
+    border-radius: 2px;
+    position: absolute;
+    z-index: 10;
+}
+
+.success-checkmark .check-icon .icon-line.line-tip {
+    top: 46px;
+    left: 14px;
+    width: 25px;
+    transform: rotate(45deg);
+    animation: icon-line-tip 0.75s;
+}
+
+.success-checkmark .check-icon .icon-line.line-long {
+    top: 38px;
+    right: 8px;
+    width: 47px;
+    transform: rotate(-45deg);
+    animation: icon-line-long 0.75s;
+}
+
+@keyframes icon-line-tip {
+    0% {
+        width: 0;
+        left: 1px;
+        top: 19px;
+    }
+    54% {
+        width: 0;
+        left: 1px;
+        top: 19px;
+    }
+    70% {
+        width: 50px;
+        left: -8px;
+        top: 37px;
+    }
+    84% {
+        width: 17px;
+        left: 21px;
+        top: 48px;
+    }
+    100% {
+        width: 25px;
+        left: 14px;
+        top: 46px;
+    }
+}
+
+@keyframes icon-line-long {
+    0% {
+        width: 0;
+        right: 46px;
+        top: 54px;
+    }
+    65% {
+        width: 0;
+        right: 46px;
+        top: 54px;
+    }
+    84% {
+        width: 55px;
+        right: 0px;
+        top: 35px;
+    }
+    100% {
+        width: 47px;
+        right: 8px;
+        top: 38px;
+    }
+}

@@ -7,6 +7,7 @@ use App\Http\Controllers\PemeriksaanController;
 use App\Http\Controllers\PasienController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ObatController;
+use App\Http\Controllers\VisionMeAppController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +19,7 @@ Route::get('/', [AuthController::class, 'showLogin'])->name('login');
 Route::get('/login', [AuthController::class, 'showLogin']);
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/app', [VisionMeAppController::class, 'index'])->name('visionme.app');
 
 /*
 |--------------------------------------------------------------------------
