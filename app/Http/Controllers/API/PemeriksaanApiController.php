@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Barryvdh\DomPDF\Facade\Pdf; // 👈 1. TAMBAHKAN IMPORT INI DI ATAS
 
 class PemeriksaanApiController extends Controller
 {
@@ -25,13 +26,12 @@ class PemeriksaanApiController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => $validator->errors()->first(), // Disinkronkan: Mengambil 1 pesan error pertama
+                'message' => $validator->errors()->first(),
                 'errors'  => $validator->errors()
             ], 422);
         }
 
         try {
-            // user_id diambil otomatis dari user yang sedang login via token
             $pemeriksaan = PemeriksaanMata::create([
                 'user_id'          => $request->user()->id,
                 'kategori_uji'     => $request->kategori_uji,
@@ -64,7 +64,6 @@ class PemeriksaanApiController extends Controller
             'email'    => 'required|email|unique:users,email',
             'password' => 'required|string|min:8',
         ], [
-            // Custom pesan validasi agar lebih user-friendly di mobile
             'email.unique' => 'Email ini sudah terdaftar.',
             'password.min' => 'Password minimal harus 8 karakter.',
         ]);
@@ -72,7 +71,7 @@ class PemeriksaanApiController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => $validator->errors()->first(), // Disinkronkan: Mengambil 1 string error pertama untuk snackbar Flutter
+                'message' => $validator->errors()->first(),
                 'errors'  => $validator->errors()
             ], 422);
         }
@@ -117,7 +116,7 @@ class PemeriksaanApiController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => $validator->errors()->first(), // Disinkronkan
+                'message' => $validator->errors()->first(),
                 'errors'  => $validator->errors()
             ], 422);
         }
@@ -131,10 +130,7 @@ class PemeriksaanApiController extends Controller
             ], 401);
         }
 
-        // Hapus token lama agar tidak menumpuk
         $user->tokens()->delete();
-
-        // Buat token baru menggunakan Sanctum
         $token = $user->createToken('visionme_mobile')->plainTextToken;
 
         return response()->json([
@@ -161,5 +157,54 @@ class PemeriksaanApiController extends Controller
             'success' => true,
             'message' => 'Logout berhasil.'
         ], 200);
+    }
+
+    /**
+     * 👈 2. METHOD BARU UNTUK CETAK PDF HASIL DAN ANJURAN DOKTER
+     */
+    public function exportPdf($id, Request $request)
+    {
+        // Cari data pemeriksaan dan pastikan ini milik user yang sedang login
+        $pemeriksaan = PemeriksaanMata::where('id', $id)
+            ->where('user_id', $request->user()->id)
+            ->first();
+
+        if (!$pemeriksaan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data rekam medis tidak ditemukan atau bukan milik Anda.'
+            ], 404);
+        }
+
+        $user = $request->user();
+        $kesimpulanKondisi = "";
+        $saranMedis = "";
+
+        // Logika penentuan keadaan mata dan arahan periksa dokter terdekat
+        if ($pemeriksaan->status_medis === 'Normal') {
+            $kesimpulanKondisi = "Berdasarkan hasil skrining, kemampuan persepsi warna Anda berfungsi dengan sangat baik. Tidak ditemukan adanya tanda-tanda buta warna pada pelat Ishihara yang diujikan.";
+            $saranMedis = "Pertahankan kondisi kesehatan mata Anda dengan mengonsumsi makanan kaya vitamin A. Disarankan untuk tetap melakukan pemeriksaan mata rutin ke dokter spesialis mata atau optik terdekat minimal 1 tahun sekali untuk deteksi dini kesehatan mata secara umum.";
+        } elseif ($pemeriksaan->status_medis === 'Perlu Pemeriksaan Lanjutan') {
+            $kesimpulanKondisi = "Hasil skrining mendeteksi adanya keraguan atau kesalahan parsial saat Anda mengidentifikasi angka pada pelat Ishihara. Kondisi ini bisa dipengaruhi oleh kelelahan mata akut atau indikasi awal penurunan kepekaan warna.";
+            $saranMedis = "Sangat disarankan bagi Anda untuk meluangkan waktu melakukan pemeriksaan konfirmasi langsung ke Dokter Spesialis Mata (Sp.M) di puskesmas, klinik, atau rumah sakit terdekat. Dokter akan melakukan evaluasi komprehensif guna memastikan apakah ini murni kelelahan mata atau gejala buta warna sebagian.";
+        } else {
+            // Indikasi Buta Warna
+            $kesimpulanKondisi = "Hasil skrining menunjukkan kecenderungan kuat adanya hambatan atau ketidakmampuan dalam membaca spektrum warna tertentu secara akurat (Indikasi Buta Warna).";
+            $saranMedis = "Mengingat hasil skrining menunjukkan indikasi buta warna, mohon segera jadwalkan kunjungan ke Dokter Spesialis Mata (Sp.M) terdekat di kota Anda. Pemeriksaan klinis lebih lanjut (seperti Uji Farnsworth-Munsell) sangat diperlukan di rumah sakit atau klinik mata untuk mendapatkan diagnosis medis resmi serta arahan tindak lanjut yang tepat untuk menunjang aktivitas harian Anda.";
+        }
+
+        $data = [
+            'title' => 'SURAT HASIL SKRINING KESEHATAN MATA DIGITAL',
+            'date' => now()->translatedFormat('d F Y'),
+            'user' => $user,
+            'pemeriksaan' => $pemeriksaan,
+            'kesimpulan' => $kesInterior ?? $kesimpulanKondisi,
+            'saran' => $saranMedis
+        ];
+
+        // Melempar data ke halaman cetak pdf.pemeriksaan
+        $pdf = Pdf::loadView('pdf.pemeriksaan', $data);
+        
+        return $pdf->stream('VisionMe_Hasil_'.$pemeriksaan->id.'.pdf');
     }
 }

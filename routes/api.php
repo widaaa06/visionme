@@ -19,6 +19,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Menyimpan data hasil skrining dari mobile (Memanggil method store)
     Route::post('/pemeriksaan/store', [PemeriksaanApiController::class, 'store']);
 
+    // 👈 TAMBAHKAN ROUTE CETAK PDF INI DI DALAM SANCTUM GROUP
+    Route::get('/pemeriksaan/export-pdf/{id}', [PemeriksaanApiController::class, 'exportPdf']);
+
     // Mengambil riwayat pemeriksaan untuk mobile
     Route::get('/riwayat-pemeriksaan', [PemeriksaanController::class, 'getRiwayatApi']);
 
